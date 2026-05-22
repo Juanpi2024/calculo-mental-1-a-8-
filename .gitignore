@@ -1,0 +1,18 @@
+# Backup ZIPs
+*.zip
+
+# Node packages
+node_modules/
+app/node_modules/
+
+# Production builds
+app/dist/
+dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# System Files
+.DS_Store
+Thumbs.db

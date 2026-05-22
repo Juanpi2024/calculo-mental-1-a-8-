@@ -1,0 +1,110 @@
+{
+  "sumas_restas": {
+    "1ºA": {
+      "formula": "IF(D10>=56,(\"Automático\"),IF(D10>=46,(\"Rápido\"),IF(D10>=36,(\"Mediano\"),IF(D10>=26,(\"Lento\"),IF(D10>=15,(\"Muy Lento\"),IF(D10<=14,(\"Fuera Tabla\")))))))",
+      "valSample": "Fuera Tabla"
+    },
+    "1ºB": {
+      "formula": "IF(D10>=56,(\"Automático\"),IF(D10>=46,(\"Rápido\"),IF(D10>=36,(\"Mediano\"),IF(D10>=26,(\"Lento\"),IF(D10>=15,(\"Muy Lento\"),IF(D10<=14,(\"Fuera Tabla\")))))))",
+      "valSample": "Fuera Tabla"
+    },
+    "2ºA": {
+      "formula": "IF(D10>=48,(\"Automático\"),IF(D10>=40,(\"Muy Rápido\"),IF(D10>=31,(\"Rápido\"),IF(D10>=23,(\"Mediano\"),IF(D10>=15,(\"Lento\"),IF(D10>=10,(\"Muy Lento\"),IF(D10<=9,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "2ºB": {
+      "formula": "IF(D10>=48,(\"Automático\"),IF(D10>=40,(\"Muy Rápido\"),IF(D10>=31,(\"Rápido\"),IF(D10>=23,(\"Mediano\"),IF(D10>=15,(\"Lento\"),IF(D10>=10,(\"Muy Lento\"),IF(D10<=9,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "3ºA": {
+      "formula": "IF(D10>=48,(\"Automático\"),IF(D10>=41,(\"Muy Rápido\"),IF(D10>=34,(\"Rápido\"),IF(D10>=27,(\"Mediano\"),IF(D10>=21,(\"Lento\"),IF(D10>=14,(\"Muy Lento\"),IF(D10<=13,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "3ºB": {
+      "formula": "IF(D10>=48,(\"Automático\"),IF(D10>=41,(\"Muy Rápido\"),IF(D10>=34,(\"Rápido\"),IF(D10>=27,(\"Mediano\"),IF(D10>=21,(\"Lento\"),IF(D10>=14,(\"Muy Lento\"),IF(D10<=13,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "4ºA": {
+      "formula": "IF(D10>=48,(\"Automático\"),IF(D10>=42,(\"Muy Rápido\"),IF(D10>=36,(\"Rápido\"),IF(D10>=31,(\"Mediano\"),IF(D10>=24,(\"Lento\"),IF(D10>=18,(\"Muy Lento\"),IF(D10<=17,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "4ºB": {
+      "formula": "IF(D10>=48,(\"Automático\"),IF(D10>=42,(\"Muy Rápido\"),IF(D10>=36,(\"Rápido\"),IF(D10>=31,(\"Mediano\"),IF(D10>=24,(\"Lento\"),IF(D10>=18,(\"Muy Lento\"),IF(D10<=17,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "5ºA": {
+      "formula": "IF(D10>=48,(\"Automático\"),IF(D10>=43,(\"Muy Rápido\"),IF(D10>=38,(\"Rápido\"),IF(D10>=33,(\"Mediano\"),IF(D10>=28,(\"Lento\"),IF(D10>=23,(\"Muy Lento\"),IF(D10<=22,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "5ºB": {
+      "formula": "IF(D10>=48,(\"Automático\"),IF(D10>=43,(\"Muy Rápido\"),IF(D10>=38,(\"Rápido\"),IF(D10>=33,(\"Mediano\"),IF(D10>=28,(\"Lento\"),IF(D10>=23,(\"Muy Lento\"),IF(D10<=22,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "6ºA": {
+      "formula": "IF(D10>=48,(\"Automático\"),IF(D10>=45,(\"Muy Rápido\"),IF(D10>=42,(\"Rápido\"),IF(D10>=39,(\"Mediano\"),IF(D10>=36,(\"Lento\"),IF(D10>=31,(\"Muy Lento\"),IF(D10<=30,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "6ºB": {
+      "formula": "IF(D10>=48,(\"Automático\"),IF(D10>=45,(\"Muy Rápido\"),IF(D10>=42,(\"Rápido\"),IF(D10>=39,(\"Mediano\"),IF(D10>=36,(\"Lento\"),IF(D10>=31,(\"Muy Lento\"),IF(D10<=30,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "7ºA": {
+      "formula": "IF(D10>=48,(\"Automático\"),IF(D10>=45,(\"Muy Rápido\"),IF(D10>=42,(\"Rápido\"),IF(D10>=39,(\"Mediano\"),IF(D10>=36,(\"Lento\"),IF(D10>=31,(\"Muy Lento\"),IF(D10<=30,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "7ºB": {
+      "formula": "IF(D10>=48,(\"Automático\"),IF(D10>=45,(\"Muy Rápido\"),IF(D10>=42,(\"Rápido\"),IF(D10>=39,(\"Mediano\"),IF(D10>=36,(\"Lento\"),IF(D10>=31,(\"Muy Lento\"),IF(D10<=30,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "8ºA": {
+      "formula": "IF(D10>=48,(\"Automático\"),IF(D10>=45,(\"Muy Rápido\"),IF(D10>=42,(\"Rápido\"),IF(D10>=39,(\"Mediano\"),IF(D10>=36,(\"Lento\"),IF(D10>=31,(\"Muy Lento\"),IF(D10<=30,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "8ºB": {
+      "formula": "IF(D10>=48,(\"Automático\"),IF(D10>=45,(\"Muy Rápido\"),IF(D10>=42,(\"Rápido\"),IF(D10>=39,(\"Mediano\"),IF(D10>=36,(\"Lento\"),IF(D10>=31,(\"Muy Lento\"),IF(D10<=30,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    }
+  },
+  "multiplicacion": {
+    "4ºA": {
+      "formula": "IF(D10>=46,(\"Automático\"),IF(D10>=41,(\"Muy Rápido\"),IF(D10>=36,(\"Rápido\"),IF(D10>=31,(\"Mediano\"),IF(D10>=26,(\"Lento\"),IF(D10>=20,(\"Muy Lento\"),IF(D10<=19,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "4ºB": {
+      "formula": "IF(D10>=46,(\"Automático\"),IF(D10>=41,(\"Muy Rápido\"),IF(D10>=36,(\"Rápido\"),IF(D10>=31,(\"Mediano\"),IF(D10>=26,(\"Lento\"),IF(D10>=20,(\"Muy Lento\"),IF(D10<=19,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "5ºA": {
+      "formula": "IF(D10>=56,(\"Automático\"),IF(D10>=49,(\"Muy Rápido\"),IF(D10>=43,(\"Rápido\"),IF(D10>=37,(\"Mediano\"),IF(D10>=31,(\"Lento\"),IF(D10>=25,(\"Muy Lento\"),IF(D10<=24,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "5ºB": {
+      "formula": "IF(D10>=56,(\"Automático\"),IF(D10>=49,(\"Muy Rápido\"),IF(D10>=43,(\"Rápido\"),IF(D10>=37,(\"Mediano\"),IF(D10>=31,(\"Lento\"),IF(D10>=25,(\"Muy Lento\"),IF(D10<=24,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "6ºA": {
+      "formula": "IF(D10>=58,(\"Automático\"),IF(D10>=51,(\"Muy Rápido\"),IF(D10>=46,(\"Rápido\"),IF(D10>=41,(\"Mediano\"),IF(D10>=36,(\"Lento\"),IF(D10>=30,(\"Muy Lento\"),IF(D10<=29,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "6ºB": {
+      "formula": "IF(D10>=58,(\"Automático\"),IF(D10>=51,(\"Muy Rápido\"),IF(D10>=46,(\"Rápido\"),IF(D10>=41,(\"Mediano\"),IF(D10>=36,(\"Lento\"),IF(D10>=30,(\"Muy Lento\"),IF(D10<=29,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "7ºA": {
+      "formula": "IF(D10>=58,(\"Automático\"),IF(D10>=51,(\"Muy Rápido\"),IF(D10>=46,(\"Rápido\"),IF(D10>=41,(\"Mediano\"),IF(D10>=36,(\"Lento\"),IF(D10>=30,(\"Muy Lento\"),IF(D10<=29,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "7ºB": {
+      "formula": "IF(D10>=58,(\"Automático\"),IF(D10>=51,(\"Muy Rápido\"),IF(D10>=46,(\"Rápido\"),IF(D10>=41,(\"Mediano\"),IF(D10>=36,(\"Lento\"),IF(D10>=30,(\"Muy Lento\"),IF(D10<=29,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "8ºA": {
+      "formula": "IF(D10>=58,(\"Automático\"),IF(D10>=51,(\"Muy Rápido\"),IF(D10>=46,(\"Rápido\"),IF(D10>=41,(\"Mediano\"),IF(D10>=36,(\"Lento\"),IF(D10>=30,(\"Muy Lento\"),IF(D10<=29,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    },
+    "8ºB": {
+      "formula": "IF(D10>=58,(\"Automático\"),IF(D10>=51,(\"Muy Rápido\"),IF(D10>=46,(\"Rápido\"),IF(D10>=41,(\"Mediano\"),IF(D10>=36,(\"Lento\"),IF(D10>=30,(\"Muy Lento\"),IF(D10<=29,(\"Fuera de Tabla\"))))))))",
+      "valSample": "Fuera de Tabla"
+    }
+  }
+}
