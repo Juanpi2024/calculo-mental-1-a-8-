@@ -15,6 +15,8 @@ export default function EvaluacionView({
   const [scoresInput, setScoresInput] = useState({}); // { studentId: score }
   const [evalTitle, setEvalTitle] = useState('');
   const [evalDate, setEvalDate] = useState(new Date().toISOString().substring(0, 10));
+  const [planillaType, setPlanillaType] = useState('tabla'); // 'tabla' | 'clic-rapido'
+  const [activeStudentIdx, setActiveStudentIdx] = useState(0);
 
   // Presenter mode state
   const [activeQuestionIdx, setActiveQuestionIdx] = useState(0);
@@ -78,6 +80,7 @@ export default function EvaluacionView({
       initialScores[s.id] = '';
     });
     setScoresInput(initialScores);
+    setActiveStudentIdx(0);
   }, [selectedTestId, students]);
 
   // Clean timers on unmount
@@ -375,25 +378,258 @@ export default function EvaluacionView({
       {/* --- 1. Planilla Rápida View --- */}
       {evalMode === 'planilla' && activeTest && (
         <form onSubmit={handleSaveEvaluation}>
-          <div className="grid-cols-2" style={{ gap: '24px', alignItems: 'start', gridTemplateColumns: '2fr 1fr' }}>
+          {/* Selector de Teclado Táctil vs Tabla Tradicional */}
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', backgroundColor: 'var(--bg-app)', padding: '4px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', width: 'fit-content' }}>
+            <button
+              type="button"
+              className={`mode-toggle-btn ${planillaType === 'tabla' ? 'active' : ''}`}
+              onClick={() => setPlanillaType('tabla')}
+              style={{ padding: '6px 12px', fontSize: '13px', borderRadius: '4px' }}
+            >
+              📊 Planilla Tradicional
+            </button>
+            <button
+              type="button"
+              className={`mode-toggle-btn ${planillaType === 'clic-rapido' ? 'active' : ''}`}
+              onClick={() => setPlanillaType('clic-rapido')}
+              style={{ padding: '6px 12px', fontSize: '13px', borderRadius: '4px' }}
+            >
+              🖱️ Teclado de Clic Rápido (Táctil)
+            </button>
+          </div>
+
+          <div className="grid-cols-2" style={{ gap: '24px', alignItems: 'start', gridTemplateColumns: '2fr 1fr', display: 'grid' }}>
             
-            {/* Table roster grade entry */}
-            <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-              <div className="card-header" style={{ padding: '20px 24px', marginBottom: 0 }}>
-                <h3 className="card-title">
-                  Ingreso de Aciertos
-                </h3>
-                <span className="badge badge-mediano">
-                  {students.length} alumnos
-                </span>
-              </div>
-              
-              {students.length === 0 ? (
-                <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
-                  Añada alumnos en la pestaña <strong>Nómina de Alumnos</strong> antes de calificar.
+            {planillaType === 'clic-rapido' ? (
+              /* Teclado Táctil Clic Rápido */
+              <div className="card" style={{ padding: '24px', display: 'grid', gridTemplateColumns: '1.2fr 1.8fr', gap: '24px', minHeight: '450px' }}>
+                
+                {/* Left Side: Student List */}
+                <div style={{ borderRight: '1px solid var(--border-color)', paddingRight: '20px', maxHeight: '480px', overflowY: 'auto' }}>
+                  <h4 style={{ margin: '0 0 16px', fontSize: '14px', fontWeight: '700', color: 'var(--text-title)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>Lista de Alumnos</span>
+                    <span className="badge badge-mediano" style={{ fontSize: '10px' }}>{students.length}</span>
+                  </h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    {students.map((s, idx) => {
+                      const isActive = idx === activeStudentIdx;
+                      const scoreVal = scoresInput[s.id] !== undefined ? scoresInput[s.id] : '';
+                      const rgo = getRango(scoreVal, currentClass, testType);
+
+                      const getBadgeClassSimple = (rg) => {
+                        if (!rg) return 'badge-sin-datos';
+                        const r = rg.toLowerCase();
+                        if (r.includes('auto')) return 'badge-automatico';
+                        if (r.includes('muy rapido') || r.includes('muy rápido')) return 'badge-muy-rapido';
+                        if (r.includes('rapido') || r.includes('rápido')) return 'badge-rapido';
+                        if (r.includes('median')) return 'badge-mediano';
+                        if (r.includes('muy lento')) return 'badge-muy-lento';
+                        if (r.includes('lento')) return 'badge-lento';
+                        if (r.includes('fuera')) return 'badge-fuera';
+                        return 'badge-sin-datos';
+                      };
+
+                      return (
+                        <div
+                          key={s.id}
+                          type="button"
+                          onClick={() => setActiveStudentIdx(idx)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '10px 12px',
+                            borderRadius: 'var(--radius-sm)',
+                            cursor: 'pointer',
+                            backgroundColor: isActive ? 'var(--primary-light)' : 'var(--bg-card)',
+                            border: isActive ? '2px solid var(--primary)' : '1px solid var(--border-color)',
+                            transition: 'all 0.15s ease'
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', width: '16px' }}>{idx + 1}</span>
+                            <span style={{ fontWeight: '600', fontSize: '13px', color: isActive ? 'var(--primary)' : 'var(--text-title)' }}>
+                              {s.nombre} {s.apellido}
+                            </span>
+                          </div>
+                          
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ fontWeight: '800', fontSize: '14px', color: 'var(--primary)' }}>
+                              {scoreVal !== '' ? scoreVal : '-'}
+                            </span>
+                            {scoreVal !== '' && (
+                              <span className={`badge ${getBadgeClassSimple(rgo)}`} style={{ fontSize: '9px', padding: '1px 4px', transform: 'scale(0.85)', originX: 'right' }}>
+                                {rgo.substring(0, 4)}..
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              ) : (
-                <div className="table-wrapper" style={{ border: 'none', boxShadow: 'none' }}>
+
+                {/* Right Side: Interactive Score Keyboard Grid */}
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  {students.length === 0 ? (
+                    <div style={{ display: 'flex', flexGrow: 1, alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+                      Añada alumnos antes de calificar.
+                    </div>
+                  ) : (
+                    <>
+                      {/* Active Student Header */}
+                      <div style={{ backgroundColor: 'var(--bg-app)', padding: '16px 20px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)', marginBottom: '16px' }}>
+                        <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          Evaluando estudiante {activeStudentIdx + 1} de {students.length}
+                        </span>
+                        <h3 style={{ margin: '4px 0 10px', fontSize: '20px', fontWeight: '800', color: 'var(--text-title)' }}>
+                          {students[activeStudentIdx]?.nombre} {students[activeStudentIdx]?.apellido}
+                        </h3>
+                        
+                        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+                          <div>
+                            <span style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block' }}>Aciertos:</span>
+                            <strong style={{ fontSize: '28px', fontWeight: '800', color: 'var(--primary)' }}>
+                              {scoresInput[students[activeStudentIdx]?.id] !== '' && scoresInput[students[activeStudentIdx]?.id] !== undefined ? scoresInput[students[activeStudentIdx]?.id] : '-'}
+                            </strong>
+                          </div>
+                          <div>
+                            <span style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block' }}>Rango Estimado:</span>
+                            <span className={`badge ${
+                              (() => {
+                                const sc = scoresInput[students[activeStudentIdx]?.id];
+                                const rg = getRango(sc, currentClass, testType);
+                                if (!rg) return 'badge-sin-datos';
+                                const r = rg.toLowerCase();
+                                if (r.includes('auto')) return 'badge-automatico';
+                                if (r.includes('muy rapido') || r.includes('muy rápido')) return 'badge-muy-rapido';
+                                if (r.includes('rapido') || r.includes('rápido')) return 'badge-rapido';
+                                if (r.includes('median')) return 'badge-mediano';
+                                if (r.includes('muy lento')) return 'badge-muy-lento';
+                                if (r.includes('lento')) return 'badge-lento';
+                                if (r.includes('fuera')) return 'badge-fuera';
+                                return 'badge-sin-datos';
+                              })()
+                            }`} style={{ padding: '4px 10px', fontSize: '12px', marginTop: '2px', display: 'inline-block' }}>
+                              {getRango(scoresInput[students[activeStudentIdx]?.id], currentClass, testType) || 'Sin Datos'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Number Pad Grid */}
+                      <div>
+                        <span style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>
+                          Haz clic sobre la cantidad de respuestas correctas:
+                        </span>
+                        
+                        <div style={{
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fill, minmax(50px, 1fr))',
+                          gap: '6px',
+                          marginBottom: '20px'
+                        }}>
+                          {Array.from({ length: (activeTest.questions?.length || 30) + 1 }).map((_, num) => {
+                            const studentId = students[activeStudentIdx]?.id;
+                            const isSelected = scoresInput[studentId] === num;
+                            
+                            return (
+                              <button
+                                key={num}
+                                type="button"
+                                onClick={() => {
+                                  handleScoreChange(studentId, num);
+                                  playTone(400 + num * 10, 0.1, 'sine');
+                                  
+                                  // Auto-advance to next student
+                                  setTimeout(() => {
+                                    setActiveStudentIdx(prev => {
+                                      if (prev + 1 < students.length) {
+                                        return prev + 1;
+                                      }
+                                      return prev;
+                                    });
+                                  }, 150);
+                                }}
+                                style={{
+                                  padding: '10px 0',
+                                  fontSize: '15px',
+                                  fontWeight: '700',
+                                  borderRadius: 'var(--radius-sm)',
+                                  border: isSelected ? '2px solid var(--primary)' : '1px solid var(--border-color)',
+                                  backgroundColor: isSelected ? 'var(--primary)' : 'var(--bg-card)',
+                                  color: isSelected ? 'white' : 'var(--text-title)',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.15s ease',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}
+                              >
+                                {num}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Manual Navigation Controls */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--border-color)', paddingTop: '16px' }}>
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          onClick={() => setActiveStudentIdx(prev => Math.max(0, prev - 1))}
+                          disabled={activeStudentIdx === 0}
+                          style={{ padding: '8px 16px', fontSize: '13px' }}
+                        >
+                          ◀ Anterior
+                        </button>
+                        
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          onClick={() => {
+                            const studentId = students[activeStudentIdx]?.id;
+                            handleScoreChange(studentId, '');
+                          }}
+                          style={{ padding: '8px 16px', fontSize: '13px', backgroundColor: 'var(--rango-lento-bg)', color: 'var(--rango-lento)', border: 'none' }}
+                        >
+                          Limpiar
+                        </button>
+
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          onClick={() => setActiveStudentIdx(prev => Math.min(students.length - 1, prev + 1))}
+                          disabled={activeStudentIdx + 1 >= students.length}
+                          style={{ padding: '8px 16px', fontSize: '13px' }}
+                        >
+                          Siguiente ▶
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+              </div>
+            ) : (
+              /* Table roster grade entry (Traditional Spreadsheet) */
+              <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                <div className="card-header" style={{ padding: '20px 24px', marginBottom: 0 }}>
+                  <h3 className="card-title">
+                    Ingreso de Aciertos
+                  </h3>
+                  <span className="badge badge-mediano">
+                    {students.length} alumnos
+                  </span>
+                </div>
+                
+                {students.length === 0 ? (
+                  <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                    Añada alumnos en la pestaña <strong>Nómina de Alumnos</strong> antes de calificar.
+                  </div>
+                ) : (
+                  <div className="table-wrapper" style={{ border: 'none', boxShadow: 'none' }}>
                   <table className="quick-edit-table">
                     <thead>
                       <tr>
@@ -447,7 +683,7 @@ export default function EvaluacionView({
                   </table>
                 </div>
               )}
-            </div>
+            </div>)}
 
             {/* Config & Save Card */}
             <div className="card">
