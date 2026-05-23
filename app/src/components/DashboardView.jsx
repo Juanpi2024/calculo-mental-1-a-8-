@@ -90,7 +90,7 @@ export default function DashboardView({
     desc: "El curso se encuentra en nivel diagnóstico. Se recomienda practicar dictados diarios de 10 ejercicios con cronómetro visual para acostumbrar al curso al ritmo de evaluación de 2 minutos."
   };
   
-  if (testType === 'multiplicacion') {
+  if (testType === 'multiplicacion' || testType === 'tablas') {
     recommendation = {
       title: "Consolidar las tablas del 7, 8 y 9",
       desc: "Las estadísticas muestran un retroceso en multiplicaciones con factores altos. Utiliza la técnica del 'reloj de multiplicación' (dibujar un círculo con factores del 1 al 12 alrededor y el multiplicando en el centro) durante los primeros 5 minutos de la clase."

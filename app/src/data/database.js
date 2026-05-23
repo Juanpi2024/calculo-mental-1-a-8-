@@ -1886,7 +1886,7 @@ export function getRango(score, grade, type) {
   if (isNaN(scoreNum)) return '';
 
   const gradeKey = grade.trim();
-  const testType = type === 'multiplicacion' ? 'multiplicacion' : 'sumas_restas';
+  const testType = (type === 'multiplicacion' || type === 'tablas') ? 'multiplicacion' : 'sumas_restas';
   
   // Buscar escala para el grado específico. 
   // Ej: "5ºA" o "5ºB" o "5° BASICO A" -> normalizar a la clave "5ºA" o similar si no existe.
@@ -1926,9 +1926,10 @@ export function getRango(score, grade, type) {
 
 // Genera un historial de calificaciones de ejemplo realista para demostración inmediata
 export function getDemoHistory(gradeKey, testType) {
-  const isMult = testType === 'multiplicacion';
+  const isMult = testType === 'multiplicacion' || testType === 'tablas';
+  const testKeyNormal = isMult ? 'multiplicacion' : 'sumas_restas';
   const gradeClean = gradeKey.includes('A') ? gradeKey : gradeKey.replace('B', 'A'); // usar escala A para demo
-  const gradeScale = thresholds[testType][gradeClean] || (isMult ? thresholds.multiplicacion['4ºA'] : thresholds.sumas_restas['1ºA']);
+  const gradeScale = thresholds[testKeyNormal][gradeClean] || (isMult ? thresholds.multiplicacion['4ºA'] : thresholds.sumas_restas['1ºA']);
   
   const history = {};
   const mayoResults = {};

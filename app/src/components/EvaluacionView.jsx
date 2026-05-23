@@ -33,17 +33,27 @@ export default function EvaluacionView({
 
   const timerRef = useRef(null);
 
-  // Load the test categories depending on testType
+  // Load the test categories depending on testType and currentClass
   const getTestCategoryKey = () => {
-    if (testType === 'multiplicacion') return 'multiplicacion_4_8';
-    // sumas y restas or tables
-    // Let's check grade to map
     const gradeNum = parseInt(currentClass);
-    if (isNaN(gradeNum)) return 'sumas_restas_2_8';
     
-    if (gradeNum >= 1 && gradeNum <= 4) return 'tablas_1_4';
-    if (gradeNum >= 5 && gradeNum <= 8) return 'tablas_5_8';
-    return 'sumas_restas_2_8';
+    if (testType === 'sumas_restas') {
+      return 'sumas_restas_2_8';
+    }
+    
+    if (testType === 'tablas') {
+      if (!isNaN(gradeNum) && gradeNum >= 1 && gradeNum <= 4) {
+        return 'tablas_1_4';
+      }
+      return 'tablas_5_8';
+    }
+    
+    // testType === 'multiplicacion'
+    if (!isNaN(gradeNum) && gradeNum >= 1 && gradeNum <= 4) {
+      // lower grades do not have separate assays, they automatically use the tables!
+      return 'tablas_1_4';
+    }
+    return 'multiplicacion_4_8';
   };
 
   const activeCategoryKey = getTestCategoryKey();

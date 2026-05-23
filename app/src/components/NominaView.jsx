@@ -6,13 +6,25 @@ export default function NominaView({
   history,
   onLoadDemo,
   setView,
-  setSelectedStudentId
+  setSelectedStudentId,
+  currentGrade = '5º',
+  currentSection = 'A'
 }) {
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
   const [bulkText, setBulkText] = useState('');
   const [showBulkAdd, setShowBulkAdd] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Target class selections for adding students
+  const [formGrade, setFormGrade] = useState(currentGrade);
+  const [formSection, setFormSection] = useState(currentSection);
+
+  const [bulkGrade, setBulkGrade] = useState(currentGrade);
+  const [bulkSection, setBulkSection] = useState(currentSection);
+
+  const [csvGrade, setCsvGrade] = useState(currentGrade);
+  const [csvSection, setCsvSection] = useState(currentSection);
   
   // Calculate average scores and latest ranks for all students
   const getStudentStats = (studentId) => {
@@ -51,7 +63,19 @@ export default function NominaView({
       apellido: apellido.trim()
     };
     
-    setStudents([...students, newStudent]);
+    const targetClass = `${formGrade}${formSection}`;
+    const activeClass = `${currentGrade}${currentSection}`;
+
+    if (targetClass === activeClass) {
+      setStudents([...students, newStudent]);
+      alert(`Alumno ${newStudent.nombre} ${newStudent.apellido} agregado con éxito al curso activo ${targetClass}`);
+    } else {
+      const targetStudents = JSON.parse(localStorage.getItem(`students_${targetClass}`) || '[]');
+      targetStudents.push(newStudent);
+      localStorage.setItem(`students_${targetClass}`, JSON.stringify(targetStudents));
+      alert(`Alumno ${newStudent.nombre} ${newStudent.apellido} agregado con éxito a ${targetClass} Básico (Inactivo)`);
+    }
+    
     setNombre('');
     setApellido('');
   };
@@ -83,7 +107,19 @@ export default function NominaView({
     });
     
     if (newStudents.length > 0) {
-      setStudents([...students, ...newStudents]);
+      const targetClass = `${bulkGrade}${bulkSection}`;
+      const activeClass = `${currentGrade}${currentSection}`;
+
+      if (targetClass === activeClass) {
+        setStudents([...students, ...newStudents]);
+        alert(`Se han importado ${newStudents.length} alumnos con éxito al curso activo ${targetClass}`);
+      } else {
+        const targetStudents = JSON.parse(localStorage.getItem(`students_${targetClass}`) || '[]');
+        const updated = [...targetStudents, ...newStudents];
+        localStorage.setItem(`students_${targetClass}`, JSON.stringify(updated));
+        alert(`Se han importado ${newStudents.length} alumnos con éxito a ${targetClass} Básico (Inactivo)`);
+      }
+      
       setBulkText('');
       setShowBulkAdd(false);
     }
@@ -160,8 +196,18 @@ export default function NominaView({
       }
       
       if (importedStudents.length > 0) {
-        setStudents([...students, ...importedStudents]);
-        alert(`Se han importado ${importedStudents.length} alumnos correctamente.`);
+        const targetClass = `${csvGrade}${csvSection}`;
+        const activeClass = `${currentGrade}${currentSection}`;
+
+        if (targetClass === activeClass) {
+          setStudents([...students, ...importedStudents]);
+          alert(`Se han importado ${importedStudents.length} alumnos correctamente al curso activo ${targetClass}`);
+        } else {
+          const targetStudents = JSON.parse(localStorage.getItem(`students_${targetClass}`) || '[]');
+          const updated = [...targetStudents, ...importedStudents];
+          localStorage.setItem(`students_${targetClass}`, JSON.stringify(updated));
+          alert(`Se han importado ${importedStudents.length} alumnos correctamente a ${targetClass} Básico (Inactivo)`);
+        }
       } else {
         alert('No se encontraron datos válidos. Recuerde que el archivo debe tener el formato: NOMBRE,APELLIDO');
       }
@@ -201,7 +247,7 @@ export default function NominaView({
         </div>
 
         {/* Buttons */}
-        <div className="flex-between gap-2">
+        <div className="flex-between gap-2" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
           {students.length === 0 ? (
             <button className="btn btn-primary" onClick={onLoadDemo}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" style={{ width: '16px', height: '16px' }}>
@@ -219,13 +265,22 @@ export default function NominaView({
             {showBulkAdd ? 'Ocultar Carga Masiva' : 'Carga Masiva (Copiar/Pegar)'}
           </button>
           
-          <label className="btn btn-secondary" style={{ cursor: 'pointer', margin: 0 }}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" style={{ width: '16px', height: '16px' }}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-            </svg>
-            Subir CSV
-            <input type="file" accept=".csv, .txt" onChange={handleCSVImport} style={{ display: 'none' }} />
-          </label>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', border: '1px solid var(--border-color)', padding: '4px 8px', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--bg-card)' }}>
+            <span style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-muted)' }}>Destino:</span>
+            <select value={csvGrade} onChange={(e) => setCsvGrade(e.target.value)} style={{ padding: '2px', fontSize: '12px', border: 'none', background: 'transparent', outline: 'none' }}>
+              {["1º", "2º", "3º", "4º", "5º", "6º", "7º", "8º"].map(g => <option key={g} value={g}>{g}</option>)}
+            </select>
+            <select value={csvSection} onChange={(e) => setCsvSection(e.target.value)} style={{ padding: '2px', fontSize: '12px', border: 'none', background: 'transparent', outline: 'none' }}>
+              {["A", "B"].map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+            <label className="btn btn-secondary" style={{ cursor: 'pointer', margin: 0, padding: '4px 8px', fontSize: '12px' }}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" style={{ width: '12px', height: '12px', marginRight: '4px', display: 'inline-block' }}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+              </svg>
+              Subir CSV
+              <input type="file" accept=".csv, .txt" onChange={handleCSVImport} style={{ display: 'none' }} />
+            </label>
+          </div>
         </div>
       </div>
 
@@ -238,6 +293,24 @@ export default function NominaView({
             </h4>
           </div>
           <form onSubmit={handleAddBulk}>
+            <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-muted)' }}>Destino:</span>
+                <select value={bulkGrade} onChange={(e) => setBulkGrade(e.target.value)} style={{ padding: '6px', borderRadius: '4px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-app)', color: 'var(--text-main)' }}>
+                  {["1º", "2º", "3º", "4º", "5º", "6º", "7º", "8º"].map(g => (
+                    <option key={g} value={g}>{g} Básico</option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-muted)' }}>Sección:</span>
+                <select value={bulkSection} onChange={(e) => setBulkSection(e.target.value)} style={{ padding: '6px', borderRadius: '4px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-app)', color: 'var(--text-main)' }}>
+                  {["A", "B"].map(s => (
+                    <option key={s} value={s}>Sección {s}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
             <div className="form-group">
               <label>Pega la lista de alumnos (un nombre completo por línea):</label>
               <textarea
@@ -294,6 +367,24 @@ export default function NominaView({
                 value={apellido}
                 onChange={(e) => setApellido(e.target.value)}
               />
+            </div>
+            <div className="grid-cols-2" style={{ gap: '12px', marginTop: '12px', gridTemplateColumns: '1fr 1fr', display: 'grid', marginBottom: '16px' }}>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label style={{ fontSize: '12px', fontWeight: '600' }}>Curso:</label>
+                <select value={formGrade} onChange={(e) => setFormGrade(e.target.value)} style={{ width: '100%', padding: '6px', borderRadius: '4px', backgroundColor: 'var(--bg-app)', color: 'var(--text-main)', border: '1px solid var(--border-color)' }}>
+                  {["1º", "2º", "3º", "4º", "5º", "6º", "7º", "8º"].map(g => (
+                    <option key={g} value={g}>{g} Básico</option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label style={{ fontSize: '12px', fontWeight: '600' }}>Sección:</label>
+                <select value={formSection} onChange={(e) => setFormSection(e.target.value)} style={{ width: '100%', padding: '6px', borderRadius: '4px', backgroundColor: 'var(--bg-app)', color: 'var(--text-main)', border: '1px solid var(--border-color)' }}>
+                  {["A", "B"].map(s => (
+                    <option key={s} value={s}>Sección {s}</option>
+                  ))}
+                </select>
+              </div>
             </div>
             <button type="submit" className="btn btn-primary w-full mt-4">
               Agregar a la Nómina

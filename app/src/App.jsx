@@ -254,13 +254,14 @@ function App() {
                 value={testType} 
                 onChange={(e) => handleTestTypeChange(e.target.value)}
               >
-                <option value="multiplicacion">Multiplicación</option>
+                <option value="multiplicacion">Multiplicación (Ensayos)</option>
+                <option value="tablas">Tablas de Multiplicar</option>
                 <option value="sumas_restas">Sumas y Restas</option>
               </select>
             </div>
           </div>
         </div>
-
+ 
         {/* View Router */}
         {view === 'dashboard' && (
           <DashboardView
@@ -273,7 +274,7 @@ function App() {
             setSelectedStudentId={setSelectedStudentId}
           />
         )}
-
+ 
         {view === 'nomina' && (
           <NominaView
             students={students}
@@ -282,6 +283,8 @@ function App() {
             onLoadDemo={handleLoadDemo}
             setView={setView}
             setSelectedStudentId={setSelectedStudentId}
+            currentGrade={currentGrade}
+            currentSection={currentSection}
           />
         )}
 

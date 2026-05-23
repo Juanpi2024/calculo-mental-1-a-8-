@@ -263,7 +263,7 @@ export default function AlumnoFichaView({
               <strong>CURSO:</strong> <span style={{ textDecoration: 'underline', marginLeft: '6px', fontWeight: '600' }}>{currentClass} Básico</span>
             </div>
             <div>
-              <strong>TIPO TEST:</strong> <span style={{ textDecoration: 'underline', textTransform: 'capitalize', marginLeft: '6px', fontWeight: '600' }}>{testType === 'multiplicacion' ? 'Multiplicación' : 'Sumas y Restas'}</span>
+              <strong>TIPO TEST:</strong> <span style={{ textDecoration: 'underline', textTransform: 'capitalize', marginLeft: '6px', fontWeight: '600' }}>{testType === 'multiplicacion' ? 'Multiplicación' : (testType === 'tablas' ? 'Tablas de Multiplicar' : 'Sumas y Restas')}</span>
             </div>
           </div>
 
