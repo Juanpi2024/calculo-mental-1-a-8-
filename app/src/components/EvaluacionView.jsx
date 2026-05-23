@@ -199,49 +199,58 @@ export default function EvaluacionView({
   };
 
   // --- Presenter Dictation Actions ---
-  // Presenter Timer Effect
+  // Presenter Global Timer Effect
   useEffect(() => {
-    if (!presenterRunning || !activeTest) return;
+    if (!presenterRunning || !activeTest || timerType !== 'global') return;
 
     const interval = setInterval(() => {
-      if (timerType === 'global') {
-        setTimeRemaining(prev => {
-          if (prev <= 1) {
+      setTimeRemaining(prev => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setPresenterRunning(false);
+          playAlarm();
+          return 0;
+        }
+        if (prev <= 6) playTick();
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [presenterRunning, timerType, activeTest]);
+
+  // Presenter Per Question Timer Effect
+  useEffect(() => {
+    if (!presenterRunning || !activeTest || timerType !== 'pregunta') return;
+
+    // Reset remaining time to secPerQuestion on index change immediately
+    setTimeRemaining(secPerQuestion);
+
+    const interval = setInterval(() => {
+      setTimeRemaining(prev => {
+        if (prev <= 1) {
+          let finished = false;
+          setActiveQuestionIdx(currIdx => {
+            if (currIdx + 1 >= activeTest.questions.length) {
+              finished = true;
+              return currIdx;
+            } else {
+              playTick();
+              return currIdx + 1;
+            }
+          });
+
+          if (finished) {
             clearInterval(interval);
             setPresenterRunning(false);
-            playAlarm();
+            playSuccess();
             return 0;
+          } else {
+            return secPerQuestion;
           }
-          if (prev <= 6) playTick();
-          return prev - 1;
-        });
-      } else {
-        // Per question timer
-        setTimeRemaining(prev => {
-          if (prev <= 1) {
-            let finished = false;
-            setActiveQuestionIdx(currIdx => {
-              if (currIdx + 1 >= activeTest.questions.length) {
-                finished = true;
-                return currIdx;
-              } else {
-                playTick();
-                return currIdx + 1;
-              }
-            });
-
-            if (finished) {
-              clearInterval(interval);
-              setPresenterRunning(false);
-              playSuccess();
-              return 0;
-            } else {
-              return secPerQuestion;
-            }
-          }
-          return prev - 1;
-        });
-      }
+        }
+        return prev - 1;
+      });
     }, 1000);
 
     return () => clearInterval(interval);
