@@ -887,18 +887,64 @@ export default function EvaluacionView({
               ></div>
             </div>
 
-            {/* Large tactile feedback button */}
-            <div style={{ margin: '12px 0 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-              <button
-                type="button"
-                onClick={() => {
-                  const currentStatus = !!presenterScores[activeQuestionIdx];
-                  const newStatus = !currentStatus;
-                  
-                  // Toggle state
-                  togglePresenterQuestion(activeQuestionIdx, newStatus);
-                  
-                  if (newStatus) {
+            {/* Side-by-side Large tactile correction buttons */}
+            <div style={{ margin: '12px 0 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', width: '100%' }}>
+              <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', width: '100%', maxWidth: '600px' }}>
+                
+                {/* Incorrecta (Mala) Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    // Set status to false
+                    togglePresenterQuestion(activeQuestionIdx, false);
+                    
+                    // Play incorrect tone (lower warning pitch)
+                    playTone(250, 0.15, 'triangle');
+                    
+                    // Auto-advance after 250ms
+                    if (activeQuestionIdx + 1 < activeTest.questions.length) {
+                      setTimeout(() => {
+                        setActiveQuestionIdx(prev => prev + 1);
+                        if (timerType === 'pregunta') setTimeRemaining(secPerQuestion);
+                      }, 250);
+                    } else {
+                      playAlarm();
+                    }
+                  }}
+                  style={{
+                    flex: 1,
+                    padding: '16px 24px',
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    borderRadius: 'var(--radius-md)',
+                    border: '2px solid var(--rango-fuera)',
+                    backgroundColor: presenterScores[activeQuestionIdx] === false ? 'var(--rango-fuera)' : 'transparent',
+                    color: presenterScores[activeQuestionIdx] === false ? '#ffffff' : 'var(--rango-fuera)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    boxShadow: presenterScores[activeQuestionIdx] === false
+                      ? '0 8px 20px hsla(354, 84%, 57%, 0.3)'
+                      : '0 4px 10px hsla(354, 84%, 57%, 0.05)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
+                    transform: 'scale(1)',
+                  }}
+                  onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.96)'; }}
+                  onMouseUp={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+                >
+                  <span>✕ Incorrecta (Mala)</span>
+                </button>
+
+                {/* Correcta (Buena) Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    // Set status to true
+                    togglePresenterQuestion(activeQuestionIdx, true);
+                    
                     // Play success tone
                     playTone(600, 0.15);
                     
@@ -911,70 +957,43 @@ export default function EvaluacionView({
                     } else {
                       playSuccess();
                     }
-                  } else {
-                    // Play soft neutral tick
-                    playTone(300, 0.1);
-                  }
-                }}
-                style={{
-                  padding: '16px 32px',
-                  fontSize: '20px',
-                  fontWeight: '700',
-                  borderRadius: 'var(--radius-md)',
-                  border: '2px solid var(--rango-automatico)',
-                  backgroundColor: presenterScores[activeQuestionIdx] ? 'var(--rango-automatico)' : 'transparent',
-                  color: presenterScores[activeQuestionIdx] ? '#ffffff' : 'var(--rango-automatico)',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: presenterScores[activeQuestionIdx] 
-                    ? '0 8px 20px hsla(152, 69%, 31%, 0.3)' 
-                    : '0 4px 10px hsla(152, 69%, 31%, 0.05)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  transform: 'scale(1)',
-                }}
-                onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.96)'; }}
-                onMouseUp={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
-              >
-                <span>{presenterScores[activeQuestionIdx] ? '✓ ¡Respuesta Correcta!' : '✓ ¿Respuesta Correcta? (Marcar Buena)'}</span>
-              </button>
-              
+                  }}
+                  style={{
+                    flex: 1,
+                    padding: '16px 24px',
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    borderRadius: 'var(--radius-md)',
+                    border: '2px solid var(--rango-automatico)',
+                    backgroundColor: presenterScores[activeQuestionIdx] === true ? 'var(--rango-automatico)' : 'transparent',
+                    color: presenterScores[activeQuestionIdx] === true ? '#ffffff' : 'var(--rango-automatico)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    boxShadow: presenterScores[activeQuestionIdx] === true
+                      ? '0 8px 20px hsla(152, 69%, 31%, 0.3)'
+                      : '0 4px 10px hsla(152, 69%, 31%, 0.05)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
+                    transform: 'scale(1)',
+                  }}
+                  onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.96)'; }}
+                  onMouseUp={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+                >
+                  <span>✓ Correcta (Buena)</span>
+                </button>
+
+              </div>
+
               <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                {presenterScores[activeQuestionIdx] 
-                  ? 'Marcada como BUENA (Se avanza automáticamente)' 
-                  : 'Déjalo sin cliquear si la respuesta es incorrecta'}
+                {presenterScores[activeQuestionIdx] === true 
+                  ? 'Registrada como CORRECTA (Avanza automáticamente)' 
+                  : presenterScores[activeQuestionIdx] === false 
+                    ? 'Registrada como INCORRECTA (Avanza automáticamente)' 
+                    : 'Selecciona una opción para calificar esta pregunta'}
               </span>
-            </div>
-
-            {/* Pagination / Jump controls */}
-            <div style={{ display: 'flex', gap: '30px', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
-              <button 
-                className="btn btn-secondary btn-icon-only" 
-                onClick={() => {
-                  setActiveQuestionIdx(prev => Math.max(0, prev - 1));
-                  if (timerType === 'pregunta') setTimeRemaining(secPerQuestion);
-                }}
-                disabled={activeQuestionIdx === 0}
-              >
-                ◀ Anterior
-              </button>
-              
-              <span style={{ fontSize: '15px', fontWeight: '600', color: 'var(--text-muted)' }}>
-                Pregunta {activeQuestionIdx + 1} de {activeTest.questions.length}
-              </span>
-
-              <button 
-                className="btn btn-secondary btn-icon-only" 
-                onClick={() => {
-                  setActiveQuestionIdx(prev => Math.min(activeTest.questions.length - 1, prev + 1));
-                  if (timerType === 'pregunta') setTimeRemaining(secPerQuestion);
-                }}
-                disabled={activeQuestionIdx + 1 >= activeTest.questions.length}
-              >
-                Siguiente ▶
-              </button>
             </div>
 
             {/* Dynamic Interactive Numbered Grid of Circles */}
@@ -993,7 +1012,7 @@ export default function EvaluacionView({
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px'
               }}>
-                Panel de Preguntas (Clic en un número para saltar o alternar)
+                Panel de Preguntas (Haz clic en un número para saltar a proyectar esa pregunta)
               </span>
               
               <div style={{
@@ -1002,11 +1021,12 @@ export default function EvaluacionView({
                 gap: '8px',
                 justifyContent: 'center',
                 maxWidth: '800px',
-                margin: '0 auto 16px'
+                margin: '0 auto 20px'
               }}>
                 {activeTest.questions.map((q, idx) => {
                   const isCurrent = idx === activeQuestionIdx;
-                  const isCorrect = !!presenterScores[idx];
+                  const isCorrect = presenterScores[idx] === true;
+                  const isIncorrect = presenterScores[idx] === false;
                   
                   return (
                     <button
@@ -1026,11 +1046,15 @@ export default function EvaluacionView({
                           ? '3px solid var(--primary)' 
                           : isCorrect 
                             ? '1px solid var(--rango-automatico)' 
-                            : '1px solid var(--border-color)',
+                            : isIncorrect
+                              ? '1px solid var(--rango-fuera)'
+                              : '1px solid var(--border-color)',
                         backgroundColor: isCorrect 
                           ? 'var(--rango-automatico)' 
-                          : 'var(--bg-card)',
-                        color: isCorrect 
+                          : isIncorrect
+                            ? 'var(--rango-fuera)'
+                            : 'var(--bg-card)',
+                        color: isCorrect || isIncorrect
                           ? '#ffffff' 
                           : 'var(--text-title)',
                         fontWeight: '700',
@@ -1044,7 +1068,9 @@ export default function EvaluacionView({
                           ? '0 0 0 3px var(--primary-light), 0 4px 8px rgba(0,0,0,0.1)' 
                           : isCorrect 
                             ? '0 2px 6px hsla(152, 69%, 31%, 0.2)' 
-                            : 'none',
+                            : isIncorrect
+                              ? '0 2px 6px hsla(354, 84%, 57%, 0.2)'
+                              : 'none',
                         position: 'relative',
                         animation: isCurrent ? 'pulse 1.5s infinite alternate' : 'none',
                       }}
@@ -1070,6 +1096,26 @@ export default function EvaluacionView({
                           ✓
                         </span>
                       )}
+                      {isIncorrect && (
+                        <span style={{
+                          position: 'absolute',
+                          bottom: '-2px',
+                          right: '-2px',
+                          width: '12px',
+                          height: '12px',
+                          borderRadius: '50%',
+                          backgroundColor: '#ffffff',
+                          color: 'var(--rango-fuera)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '8px',
+                          fontWeight: '900',
+                          border: '1px solid var(--rango-fuera)'
+                        }}>
+                          ✕
+                        </span>
+                      )}
                     </button>
                   );
                 })}
@@ -1081,13 +1127,23 @@ export default function EvaluacionView({
                   type="button"
                   className="btn btn-secondary"
                   onClick={() => {
-                    const currentStatus = !!presenterScores[activeQuestionIdx];
-                    togglePresenterQuestion(activeQuestionIdx, !currentStatus);
-                    playTone(currentStatus ? 300 : 600, 0.1);
+                    togglePresenterQuestion(activeQuestionIdx, true);
+                    playTone(600, 0.1);
                   }}
-                  style={{ padding: '6px 12px', fontSize: '12px' }}
+                  style={{ padding: '6px 12px', fontSize: '12px', borderColor: 'var(--rango-automatico)', color: 'var(--rango-automatico)' }}
                 >
-                  {presenterScores[activeQuestionIdx] ? '✕ Marcar como Incorrecta' : '✓ Marcar como Correcta'}
+                  ✓ Marcar Buena
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    togglePresenterQuestion(activeQuestionIdx, false);
+                    playTone(250, 0.1);
+                  }}
+                  style={{ padding: '6px 12px', fontSize: '12px', borderColor: 'var(--rango-fuera)', color: 'var(--rango-fuera)' }}
+                >
+                  ✕ Marcar Mala
                 </button>
                 <button
                   type="button"
@@ -1101,9 +1157,9 @@ export default function EvaluacionView({
                       playTone(200, 0.3);
                     }
                   }}
-                  style={{ padding: '6px 12px', fontSize: '12px', color: 'var(--rango-fuera)' }}
+                  style={{ padding: '6px 12px', fontSize: '12px', color: 'var(--text-muted)' }}
                 >
-                  Limpiar Calificaciones del Dictado
+                  Limpiar Calificaciones
                 </button>
               </div>
             </div>
