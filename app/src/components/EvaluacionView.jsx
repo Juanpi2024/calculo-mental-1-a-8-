@@ -1082,8 +1082,8 @@ export default function EvaluacionView({
                         animation: isCurrent ? 'pulse 1.5s infinite alternate' : 'none',
                       }}
                     >
-                      {idx + 1}
-                      {isCorrect && (
+                      <span>{idx + 1}</span>
+                      {(isCorrect || isIncorrect) && (
                         <span style={{
                           position: 'absolute',
                           bottom: '-2px',
@@ -1092,35 +1092,15 @@ export default function EvaluacionView({
                           height: '12px',
                           borderRadius: '50%',
                           backgroundColor: '#ffffff',
-                          color: 'var(--rango-automatico)',
+                          color: isCorrect ? 'var(--rango-automatico)' : 'var(--rango-fuera)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           fontSize: '8px',
                           fontWeight: '900',
-                          border: '1px solid var(--rango-automatico)'
+                          border: `1px solid ${isCorrect ? 'var(--rango-automatico)' : 'var(--rango-fuera)'}`
                         }}>
-                          ✓
-                        </span>
-                      )}
-                      {isIncorrect && (
-                        <span style={{
-                          position: 'absolute',
-                          bottom: '-2px',
-                          right: '-2px',
-                          width: '12px',
-                          height: '12px',
-                          borderRadius: '50%',
-                          backgroundColor: '#ffffff',
-                          color: 'var(--rango-fuera)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '8px',
-                          fontWeight: '900',
-                          border: '1px solid var(--rango-fuera)'
-                        }}>
-                          ✕
+                          {isCorrect ? '✓' : '✕'}
                         </span>
                       )}
                     </button>
