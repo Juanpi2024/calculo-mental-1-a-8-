@@ -199,55 +199,62 @@ export default function EvaluacionView({
   };
 
   // --- Presenter Dictation Actions ---
-  const startPresenter = () => {
-    if (!activeTest) return;
-    setPresenterRunning(true);
-    playTick();
-    
-    if (timerType === 'global') {
-      timerRef.current = setInterval(() => {
+  // Presenter Timer Effect
+  useEffect(() => {
+    if (!presenterRunning || !activeTest) return;
+
+    const interval = setInterval(() => {
+      if (timerType === 'global') {
         setTimeRemaining(prev => {
           if (prev <= 1) {
-            clearInterval(timerRef.current);
+            clearInterval(interval);
             setPresenterRunning(false);
             playAlarm();
             return 0;
           }
-          if (prev <= 6) playTick(); // beep on last 5 seconds
+          if (prev <= 6) playTick();
           return prev - 1;
         });
-      }, 1000);
-    } else {
-      // Per question timer
-      setTimeRemaining(secPerQuestion);
-      timerRef.current = setInterval(() => {
+      } else {
+        // Per question timer
         setTimeRemaining(prev => {
           if (prev <= 1) {
-            // Next question!
+            let finished = false;
             setActiveQuestionIdx(currIdx => {
               if (currIdx + 1 >= activeTest.questions.length) {
-                // Done!
-                clearInterval(timerRef.current);
-                setPresenterRunning(false);
-                playSuccess();
+                finished = true;
                 return currIdx;
               } else {
                 playTick();
-                setTimeRemaining(secPerQuestion);
                 return currIdx + 1;
               }
             });
-            return 0;
+
+            if (finished) {
+              clearInterval(interval);
+              setPresenterRunning(false);
+              playSuccess();
+              return 0;
+            } else {
+              return secPerQuestion;
+            }
           }
           return prev - 1;
         });
-      }, 1000);
-    }
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [presenterRunning, timerType, secPerQuestion, activeTest, activeQuestionIdx]);
+
+  const startPresenter = () => {
+    if (!activeTest) return;
+    setPresenterRunning(true);
+    playTick();
   };
 
   const pausePresenter = () => {
     setPresenterRunning(false);
-    if (timerRef.current) clearInterval(timerRef.current);
   };
 
   const resetPresenter = () => {
@@ -271,7 +278,7 @@ export default function EvaluacionView({
 
   // Switch timer type
   const handleTimerTypeChange = (type) => {
-    pausePresenter();
+    setPresenterRunning(false);
     setTimerType(type);
     setTimeRemaining(type === 'global' ? 120 : secPerQuestion);
   };
